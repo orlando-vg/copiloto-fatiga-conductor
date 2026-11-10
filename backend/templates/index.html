@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copiloto · Fatiga y distracción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap%22 rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body data-estado="inactivo">
+<header class="barra">
+<div class="marca">
+<span class="logo" aria-hidden="true"></span>
+<div>
+<h1>Copiloto</h1>
+<p>Detección de fatiga y distracción del conductor</p>
+</div>
+</div>
+<div class="chips">
+<span class="chip" id="chip-camara"><i></i>Cámara apagada</span>
+<span class="chip" id="chip-agente"><i></i>Agente IA</span>
+<span class="chip chip-fps" id="chip-fps">— FPS</span>
+</div>
+</header>
+ 
+  <main class="tablero">
+<!-- ============ VIDEO ============ -->
+<section class="tarjeta video-tarjeta">
+<div class="video-marco">
+<img id="video" alt="Video de la cámara">
+<div class="capa" id="capa-inactivo">
+<div class="capa-icono" aria-hidden="true"></div>
+<h2>Listo para conducir</h2>
+<p>Elige la cámara y presiona <b>Iniciar viaje</b>.</p>
+</div>
+<div class="capa capa-calibrando" id="capa-calibrando" hidden>
+<div class="anillo"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="anillo-fondo"/><circle cx="60" cy="60" r="52" class="anillo-progreso" id="anillo-progreso"/></svg><span id="texto-progreso">0%</span></div>
+<h2>Calibrando</h2>
+<p>Mira hacia donde miras normalmente al conducir, con los ojos abiertos.</p>
+</div>
+<div class="aviso-cara" id="aviso-cara" hidden>Cara fuera de vista</div>
+</div>
+<div class="controles">
+<label class="campo">
+<span>Cámara</span>
+<input id="fuente" list="fuentes" value="0" spellcheck="false">
+<datalist id="fuentes">
+<option value="0">Cámara del PC</option>
+<option value="1">Segunda cámara</option>
+<option value="http://192.168.1.10:8080/video">Celular (IP Webcam)</option>
+</datalist>
+</label>
+<button class="boton primario" id="btn-iniciar">Iniciar viaje</button>
+<button class="boton" id="btn-recalibrar" disabled>Recalibrar</button>
+<button class="boton peligro" id="btn-terminar" disabled>Terminar viaje</button>
+</div>
+<p class="error" id="error" hidden></p>
+</section>
+ 
+    <!-- ============ ESTADO ============ -->
+<section class="columna">
+<div class="tarjeta estado-tarjeta">
+<div class="medidor">
+<svg viewBox="0 0 200 120" aria-hidden="true">
+<path d="M20 105 A80 80 0 0 1 180 105" class="medidor-fondo"/>
+<path d="M20 105 A80 80 0 0 1 180 105" class="medidor-valor" id="medidor-valor"/>
+</svg>
+<div class="medidor-numero"><span id="riesgo">0</span><small>riesgo</small></div>
+</div>
+<div class="estado-texto">
+<span class="etiqueta">Estado del conductor</span>
+<h2 id="estado">SIN VIAJE</h2>
+<p id="motivo">El sistema está esperando.</p>
+</div>
+</div>
+ 
+      <div class="tarjeta">
+<h3>Votos de los tres enfoques</h3>
+<div class="votos">
+<div class="voto" id="voto-reglas"><span>Reglas</span><b>—</b><small>Contornos + geometría</small></div>
+<div class="voto" id="voto-ml"><span>ML</span><b>—</b><small>Random Forest</small></div>
+<div class="voto" id="voto-dl"><span>DL</span><b>—</b><small>YOLO ojos + celular</small></div>
+</div>
+</div>
+ 
+      <div class="tarjeta">
+<h3>Indicadores</h3>
+<div class="indicadores">
+<div><b id="ind-perclos">—</b><span>PERCLOS</span></div>
+<div><b id="ind-cerrados">—</b><span>Ojos cerrados</span></div>
+<div><b id="ind-bostezos">—</b><span>Bostezos (2 min)</span></div>
+<div><b id="ind-red">—</b><span>Red: ojo cerrado</span></div>
+</div>
+</div>
+</section>
+ 
+    <!-- ============ COPILOTO ============ -->
+<section class="tarjeta copiloto">
+<div class="copiloto-cabecera">
+<h3>Copiloto</h3>
+<span class="copiloto-estado" id="copiloto-estado">Desactivado</span>
+</div>
+<div class="chat" id="chat">
+<p class="chat-vacio">Los avisos y respuestas del copiloto aparecerán aquí y se dirán en voz alta.</p>
+</div>
+<button class="microfono" id="btn-microfono" disabled>
+<span class="microfono-icono" aria-hidden="true"></span>
+<span id="texto-microfono">Mantén presionado para hablar</span>
+</button>
+<p class="pista">También puedes mantener presionada la tecla <kbd>Espacio</kbd>.</p>
+</section>
+ 
+    <!-- ============ VIAJE ============ -->
+<section class="tarjeta viaje">
+<div class="viaje-cabecera">
+<h3>Bitácora del viaje</h3>
+<div class="resumen">
+<div><b id="res-duracion">0.0</b><span>min</span></div>
+<div><b id="res-promedio">0</b><span>riesgo prom.</span></div>
+<div><b id="res-maximo">0</b><span>riesgo máx.</span></div>
+</div>
+</div>
+<ol class="eventos" id="eventos">
+<li class="eventos-vacio">Sin episodios de riesgo.</li>
+</ol>
+</section>
+</main>
+ 
+  <!-- ============ INFORME ============ -->
+<dialog id="modal-informe">
+<h2>Informe del viaje</h2>
+<p id="texto-informe">Generando informe...</p>
+<div class="resumen resumen-modal" id="resumen-informe"></div>
+<button class="boton primario" id="btn-cerrar-informe">Cerrar</button>
+</dialog>
+ 
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "factor_ear": 0.537,
+  "umbral_mar": 0.723,
+  "grados_abajo": 15,
+  "signo_pitch": 1,
+  "grados_lateral": 28,
+  "factor_ap_ojos": 0.5,
+  "factor_ear_abajo": 0.107
+}

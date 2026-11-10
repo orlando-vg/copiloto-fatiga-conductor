@@ -1,0 +1,27 @@
+# --- Entorno virtual (NO se sube) ---
+.venv/
+venv/
+env/
+
+# --- Clave del agente de IA (NUNCA se sube) ---
+.env
+
+# --- Archivos temporales de Python ---
+__pycache__/
+*.pyc
+
+# --- Entrenamientos de YOLO (pesados; el modelo final está en modelos/) ---
+runs/
+
+# --- Datasets de imágenes (miles de fotos, muy pesados) ---
+backend/datos/ojos/
+backend/datos/dataset_ojos/
+
+# --- Modelos que se descargan solos la primera vez ---
+backend/yolo11n.pt
+backend/yolo11n-cls.pt
+
+# --- Archivos de VS Code y del sistema ---
+.vscode/
+.DS_Store
+Thumbs.db
